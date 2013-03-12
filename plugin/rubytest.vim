@@ -192,14 +192,16 @@ let s:test_case_patterns['feature'] = {'^\s*Scenario\( Outline\)\?:':function('s
 let s:save_cpo = &cpo
 set cpo&vim
 
-if !hasmapto('<Plug>RubyTestRun')
-  map <unique> <Leader>t <Plug>RubyTestRun
-endif
-if !hasmapto('<Plug>RubyFileRun')
-  map <unique> <Leader>T <Plug>RubyFileRun
-endif
-if !hasmapto('<Plug>RubyTestRunLast')
-  map <unique> <Leader>l <Plug>RubyTestRunLast
+if !g:no_rubytest_mappings
+  if !hasmapto('<Plug>RubyTestRun')
+    map <unique> <Leader>t <Plug>RubyTestRun
+  endif
+  if !hasmapto('<Plug>RubyFileRun')
+    map <unique> <Leader>T <Plug>RubyFileRun
+  endif
+  if !hasmapto('<Plug>RubyTestRunLast')
+    map <unique> <Leader>l <Plug>RubyTestRunLast
+  endif
 endif
 
 function s:IsRubyTest()
