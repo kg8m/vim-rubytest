@@ -27,7 +27,7 @@ Be default, the plugin will print output in terminal. You can change this behavi
 
 With this set, test errors will be displayed in quickfix window, and you can jump to the error location quickly by select the error message and hit return (or 'Ctrl-w return' to open it in new window).
 
-You can customize the command which will be used to run the test case by settting these options in your vimrc file:
+You can customize the command which will be used to run the test case by setting these options in your vimrc file:
 
   let g:rubytest_cmd_test = "ruby %p"
   let g:rubytest_cmd_testcase = "ruby %p -n '/%c/'"
@@ -36,7 +36,13 @@ You can customize the command which will be used to run the test case by setttin
   let g:rubytest_cmd_feature = "cucumber %p"
   let g:rubytest_cmd_story = "cucumber %p -n '%c'"
 
-(%p will be replaced by the path of test file, %c will be replaced by the name of test case under cursor)
+Placeholders:
+
+* `%p`: path of test file
+* `%c`: test case name
+* `%s`: only for minitest, replaced by closest suite name (class whose name begin with 'Test'). This can be used to match test case more exactly:
+
+  let g:rubytest_cmd_testcase = "ruby %p -n '%s#%c'"
 
 Default Key Bindings
 --------------------
@@ -50,6 +56,11 @@ You can change default key bindings:
   map <Leader>\ <Plug>RubyTestRun     " change from <Leader>t to <Leader>\
   map <Leader>] <Plug>RubyFileRun     " change from <Leader>T to <Leader>]
   map <Leader>/ <Plug>RubyTestRunLast " change from <Leader>l to <Leader>/
+
+Tip
+---
+
+* Rubytest.vim works perfectly with vim-localvimrc, which enables you to set different test run command for different projects. Check details at: https://github.com/embear/vim-localvimrc
 
 Contributors
 ------------

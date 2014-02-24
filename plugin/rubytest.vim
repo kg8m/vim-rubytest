@@ -1,5 +1,5 @@
 " Vim plugin for running ruby tests
-" Last Change: Jun 17 2011
+" Last Change: Mar 21, 2013
 " Maintainer: Jan <jan.h.xie@gmail.com>
 " License: MIT License
 
@@ -15,22 +15,22 @@ if !exists("g:rubytest_spec_drb")
   let g:rubytest_spec_drb = 0
 endif
 if !exists("g:rubytest_cmd_test")
-  let g:rubytest_cmd_test = "ruby %p"
+  let g:rubytest_cmd_test = "ruby '%p'"
 endif
 if !exists("g:rubytest_cmd_testcase")
-  let g:rubytest_cmd_testcase = "ruby %p -n '/%c/'"
+  let g:rubytest_cmd_testcase = "ruby '%p' -n '%c'"
 endif
 if !exists("g:rubytest_cmd_spec")
-  let g:rubytest_cmd_spec = "rspec %p"
+  let g:rubytest_cmd_spec = "rspec '%p'"
 endif
 if !exists("g:rubytest_cmd_example")
-  let g:rubytest_cmd_example = "rspec %p -l %c"
+  let g:rubytest_cmd_example = "rspec '%p' -l '%c'"
 endif
 if !exists("g:rubytest_cmd_feature")
-  let g:rubytest_cmd_feature = "cucumber %p"
+  let g:rubytest_cmd_feature = "cucumber '%p'"
 endif
 if !exists("g:rubytest_cmd_story")
-  let g:rubytest_cmd_story = "cucumber %p -n '%c'"
+  let g:rubytest_cmd_story = "cucumber '%p' -n '%c'"
 endif
 
 function s:FindCase(patterns)
@@ -58,16 +58,17 @@ endfunction
 function s:ExecTest(cmd)
   let g:rubytest_last_cmd = a:cmd
 
+  let cmd = substitute(a:cmd, '#', '\\#', 'g')
   if g:rubytest_in_quickfix > 0
     let s:oldefm = &efm
     let &efm = s:efm . s:efm_backtrace . ',' . s:efm_ruby . ',' . s:oldefm . ',%-G%.%#'
 
-    cex system(a:cmd)
+    cex system(cmd)
     cw
 
     let &efm = s:oldefm
   else
-    exe "!echo '" . a:cmd . "' && " . a:cmd
+    exe "!echo '" . cmd . "' && " . cmd
   endif
 endfunction
 
@@ -79,10 +80,12 @@ function s:RunTest()
   end
 
   let case = s:FindCase(s:test_case_patterns['test'])
+  let suite = s:FindCase(s:test_case_patterns['test_suite'])
   let spec_case = s:FindCase(s:test_case_patterns['spec'])
   if s:test_scope == 2 || case != 'false'
-    let case = substitute(case, "\#\\|'\\|\"", '.', 'g')
+    let case = substitute(case, "'\\|\"", '.', 'g')
     let cmd = substitute(cmd, '%c', case, 'g')
+    let cmd = substitute(cmd, '%s', suite, 'g')
     let cmd = substitute(cmd, '%p', s:EscapeBackSlash(@%), 'g')
 
     if @% =~ '^test'
@@ -176,6 +179,10 @@ function s:GetTestCaseName5(str)
   return split(a:str, "'")[1]
 endfunction
 
+function s:GetTestSuiteName(str)
+  return split(a:str)[1]
+endfunction
+
 function s:GetSpecLine(str)
   return a:str
 endfunction
@@ -186,7 +193,8 @@ endfunction
 
 let s:test_case_patterns = {}
 let s:test_case_patterns['test'] = {'^\s*def test':function('s:GetTestCaseName1'), '^\s*test \s*"':function('s:GetTestCaseName2'), "^\\s*test \\s*'":function('s:GetTestCaseName4'), '^\s*should \s*"':function('s:GetTestCaseName3'), "^\\s*should \\s*'":function('s:GetTestCaseName5')}
-let s:test_case_patterns['spec'] = {'^\s*\(it\|example\|describe\|context\) \s*':function('s:GetSpecLine')}
+let s:test_case_patterns['test_suite'] = {'^\s*class Test':function('s:GetTestSuiteName')}
+let s:test_case_patterns['spec'] = {'^\s*\(it\|example\|scenario\|describe\|context\|feature\) \s*':function('s:GetSpecLine')}
 let s:test_case_patterns['feature'] = {'^\s*Scenario\( Outline\)\?:':function('s:GetStoryLine')}
 
 let s:save_cpo = &cpo
