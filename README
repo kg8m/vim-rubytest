@@ -3,10 +3,12 @@ Rubytest.vim
 
 Rubytest.vim is a vim (http://www.vim.org) plugin, which helps you to run ruby test (including vanilla test, rspec, shoulda etc.) in vim.
 
+
 Installation
 ------------
 
 Copy all files to your ~/.vim directory.
+
 
 Usage
 -----
@@ -21,11 +23,23 @@ $ vim test/unit/user_test.rb
 
 (<Leader> is mapping to '\' by default in vim)
 
+
 Be default, the plugin will print output in terminal. You can change this behavior by putting this line in your vimrc file:
 
   let g:rubytest_in_quickfix = 1
 
 With this set, test errors will be displayed in quickfix window, and you can jump to the error location quickly by select the error message and hit return (or 'Ctrl-w return' to open it in new window).
+
+Or by putting this line in your vimrc file:
+
+  let g:rubytest_in_vimshell = 1
+
+With this set, test results will be displayed in vimshell window. In this case, the behavior is asyncable, so you can edit texts while running tests.
+
+If you want to change vimshell's split command, set a following variable:
+
+  g:rubytest_vimshell_split_command
+
 
 You can customize the command which will be used to run the test case by setting these options in your vimrc file:
 
@@ -44,6 +58,7 @@ Placeholders:
 
   let g:rubytest_cmd_testcase = "ruby %p -n '%s#%c'"
 
+
 Default Key Bindings
 --------------------
 
@@ -56,6 +71,11 @@ You can change default key bindings:
   map <Leader>\ <Plug>RubyTestRun     " change from <Leader>t to <Leader>\
   map <Leader>] <Plug>RubyFileRun     " change from <Leader>T to <Leader>]
   map <Leader>/ <Plug>RubyTestRunLast " change from <Leader>l to <Leader>/
+
+If you set as following, no key bindings are defined:
+
+  let g:no_rubytest_mappings = 1
+
 
 Tip
 ---
