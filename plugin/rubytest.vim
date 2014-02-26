@@ -200,7 +200,7 @@ let s:test_case_patterns['feature'] = {'^\s*Scenario\( Outline\)\?:':function('s
 let s:save_cpo = &cpo
 set cpo&vim
 
-if !g:no_rubytest_mappings
+if !exists("g:no_rubytest_mappings") || !g:no_rubytest_mappings
   if !hasmapto('<Plug>RubyTestRun')
     map <unique> <Leader>t <Plug>RubyTestRun
   endif
