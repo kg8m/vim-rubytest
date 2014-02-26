@@ -11,6 +11,12 @@ let rubytest_loaded = 1
 if !exists("g:rubytest_in_quickfix")
   let g:rubytest_in_quickfix = 0
 endif
+if !exists("g:rubytest_in_vimshell")
+  let g:rubytest_in_vimshell = 0
+endif
+if exists("g:rubytest_in_vimshell") && !exists("g:rubytest_vimshell_split_command")
+  let g:rubytest_vimshell_split_command = "split"
+endif
 if !exists("g:rubytest_spec_drb")
   let g:rubytest_spec_drb = 0
 endif
@@ -67,6 +73,8 @@ function s:ExecTest(cmd)
     cw
 
     let &efm = s:oldefm
+  elseif g:rubytest_in_vimshell
+    exe "VimShellExecute --split=" . g:rubytest_vimshell_split_command . " " . cmd
   else
     exe "!echo '" . cmd . "' && " . cmd
   endif
